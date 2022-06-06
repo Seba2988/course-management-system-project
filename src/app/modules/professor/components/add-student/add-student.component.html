@@ -1,0 +1,52 @@
+<div class="container">
+  <form [formGroup]="newStudentForm" (ngSubmit)="onSubmit()">
+    <div>
+      <label for="name">Name</label>
+      <input type="text" name="name" id="name" formControlName="name" />
+    </div>
+    <div>
+      <label for="lastName">Last name</label>
+      <input
+        type="text"
+        name="lastName"
+        id="lastName"
+        formControlName="lastName"
+      />
+    </div>
+    <div>
+      <label for="dateOfBirth">Date of birth</label>
+      <input
+        type="date"
+        name="dateOfBirth"
+        id="dateOfBirth"
+        formControlName="dateOfBirth"
+      />
+    </div>
+    <div>
+      <label for="address">Address</label>
+      <input
+        type="text"
+        name="address"
+        id="address"
+        formControlName="address"
+      />
+    </div>
+    <div>
+      <label for="email">E-mail</label>
+      <input type="text" name="email" id="email" formControlName="email" />
+    </div>
+    <div>
+      <label for="password">Password</label>
+      <input
+        type="password"
+        name="password"
+        id="password"
+        formControlName="password"
+      />
+    </div>
+    <button [disabled]="!newStudentForm.valid">Submit</button>
+  </form>
+  <button routerLink="../">Back</button>
+</div>
+
+<app-modal *ngIf="message" [(message)]="message"></app-modal>

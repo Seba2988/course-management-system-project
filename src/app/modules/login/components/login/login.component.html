@@ -1,0 +1,52 @@
+<div class="container">
+  <div>
+    <button
+      type="button"
+      [disabled]="isStudent"
+      (click)="onSelect()"
+      [ngClass]="{ selected: isStudent }"
+    >
+      Student
+    </button>
+    <button
+      type="button"
+      [disabled]="!isStudent"
+      [ngClass]="{ selected: !isStudent }"
+      (click)="onSelect()"
+    >
+      Professor
+    </button>
+  </div>
+
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div>
+      <label for="email">Email</label>
+      <input type="text" name="email" id="email" formControlName="email" />
+    </div>
+    <div
+      class="error"
+      *ngIf="!loginForm.get('email').valid && loginForm.get('email').touched"
+    >
+      Please enter a valid e-mail
+    </div>
+    <div>
+      <label for="password">Password</label>
+      <input
+        type="password"
+        name="password"
+        id="password"
+        formControlName="password"
+      />
+    </div>
+    <div
+      class="error"
+      *ngIf="
+        !loginForm.get('password').valid && loginForm.get('password').touched
+      "
+    >
+      Please enter a valid password
+    </div>
+    <button [disabled]="!loginForm.valid" class="login">Login</button>
+  </form>
+</div>
+<app-modal *ngIf="error" [(message)]="error"></app-modal>

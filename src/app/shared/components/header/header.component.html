@@ -1,0 +1,7 @@
+<div class="header">
+  <div class="header_nav">
+    <a (click)="onHome()">Home</a>
+    <a routerLink="/login" *ngIf="!isLogged">Login</a>
+    <a *ngIf="isLogged" (click)="onLogout()">Logout</a>
+  </div>
+</div>

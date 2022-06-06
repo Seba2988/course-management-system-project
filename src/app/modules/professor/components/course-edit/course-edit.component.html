@@ -1,0 +1,12 @@
+<div class="container">
+  <div>Course name: {{ course.name }}</div>
+  <div>
+    <div *ngIf="course.students.length !== 0">Student list</div>
+    <div *ngFor="let student of course.students">
+      {{ student.studentId.name | titlecase }}
+      {{ student.studentId.lastName | titlecase }}
+    </div>
+  </div>
+  <button class="addStudentButton" routerLink="add-student">Add student</button>
+  <button (click)="onDelete()" class="deleteButton">Delete</button>
+</div>

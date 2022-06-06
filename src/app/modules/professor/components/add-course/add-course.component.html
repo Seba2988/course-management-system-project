@@ -1,0 +1,38 @@
+<div class="container">
+  <form [formGroup]="newCourseForm" (ngSubmit)="onSubmit()">
+    <div>
+      <label for="name">Name</label>
+      <input type="text" name="name" id="name" formControlName="name" />
+    </div>
+    <div>
+      <label for="startingDate">Starting date</label>
+      <input
+        type="date"
+        name="startingDate"
+        id="startingDate"
+        formControlName="startingDate"
+      />
+    </div>
+    <div>
+      <label for="endingDate">Ending date</label>
+      <input
+        type="date"
+        name="endingDate"
+        id="endingDate"
+        formControlName="endingDate"
+      />
+    </div>
+    <div>
+      <label for="day">Day of the week</label>
+      <input type="text" name="day" id="day" formControlName="day" />
+    </div>
+    <div>
+      <label for="hour">Hour</label>
+      <input type="text" name="hour" id="hour" formControlName="hour" />
+    </div>
+    <button [disabled]="!newCourseForm.valid">Submit</button>
+  </form>
+  <button routerLink="../">Back</button>
+</div>
+
+<app-modal *ngIf="message" [(message)]="message"></app-modal>

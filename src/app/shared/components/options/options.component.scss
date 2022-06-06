@@ -1,0 +1,23 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  margin: 0.5rem auto;
+  width: 80vw;
+  gap: 5px;
+  align-items: flex-start;
+  button {
+    height: 2rem;
+    margin: 0.5rem;
+    background-color: darkslategrey;
+    //   border: 1px solid white;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.1s linear;
+    &:hover {
+      color: darkslategrey;
+      background-color: white;
+    }
+  }
+}

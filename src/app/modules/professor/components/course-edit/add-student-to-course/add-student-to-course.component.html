@@ -1,0 +1,7 @@
+<div class="container">
+  <input type="text" (input)="onSearch($event)" />
+  <div *ngFor="let student of studentsToDisplay" (click)="onAdd(student._id)">
+    {{ student.name | titlecase }} {{ student.lastName | titlecase }}
+  </div>
+</div>
+<app-modal *ngIf="message" [(message)]="message"></app-modal>
