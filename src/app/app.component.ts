@@ -7,6 +7,7 @@ import { LoginService } from './modules/login/services/login.service';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
+  isLogged: boolean;
   constructor(private loginService: LoginService) {}
   ngOnInit(): void {
     this.loginService.autoLogin();

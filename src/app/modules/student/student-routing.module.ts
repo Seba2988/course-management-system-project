@@ -5,12 +5,13 @@ import { OptionsComponent } from 'src/app/shared/components/options/options.comp
 import { LoginGuard } from '../login/login.guard';
 import { AttendanceComponent } from './components/attendance/attendance.component';
 import { StudentDashboardComponent } from './components/student-dashboard/student-dashboard.component';
+import { StudentGuard } from './services/student.guard';
 
 const routes: Routes = [
   {
     path: '',
     component: StudentDashboardComponent,
-    canActivate: [LoginGuard],
+    canActivate: [StudentGuard],
     children: [
       { path: 'me', component: ManageAccountComponent },
       { path: 'courses', component: OptionsComponent },

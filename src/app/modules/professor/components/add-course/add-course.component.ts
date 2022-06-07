@@ -29,7 +29,7 @@ export class AddCourseComponent implements OnInit {
         day: new FormControl(null, [Validators.required]),
         hour: new FormControl(null, [
           Validators.required,
-          Validators.pattern(/^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/),
+          Validators.pattern(/^([8-9]|0[8-9]|1[0-9]|2[0]):([0-5]?[0-9])$/),
         ]),
       },
       this.endingDateValidator

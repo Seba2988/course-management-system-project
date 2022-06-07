@@ -14,6 +14,8 @@ export class OptionsComponent implements OnInit, OnDestroy {
   path: string;
   buttonText: string;
   isData: boolean = false;
+  isStudent: boolean;
+  dataSub: Subscription;
   data;
   dataToDisplay;
   constructor(
@@ -27,25 +29,41 @@ export class OptionsComponent implements OnInit, OnDestroy {
     this.pathSub = this.route.url.subscribe((url) => {
       this.path = url[0].path;
     });
-    this.buttonText = this.path.slice(0, this.path.length - 1);
-    if (this.path === 'students') {
-      this.studentsService.getAllStudents();
-      this.studentsService.students.subscribe((data) => {
-        this.data = data;
-        this.isData = Object.keys(this.data).length !== 0;
-        if (this.isData) this.dataToDisplay = [...this.data];
+    this.isStudent = sessionStorage.getItem('studentToken') ? true : false;
+    if (this.isStudent) {
+      this.dataSub = this.coursesService.getAllCoursesForStudent().subscribe({
+        next: (courses) => {
+          this.retrieveData(courses);
+        },
+        error: (err) => {
+          console.log(err);
+        },
       });
+    } else {
+      this.buttonText = this.path.slice(0, this.path.length - 1);
+      if (this.path === 'students') {
+        this.dataSub = this.studentsService.getAllStudents().subscribe({
+          next: (data) => {
+            this.retrieveData(data);
+          },
+          error: (err) => {
+            console.log(err);
+          },
+        });
+      }
+      if (this.path === 'courses') {
+        this.dataSub = this.coursesService.getAllCourses().subscribe((data) => {
+          console.log(data);
+          this.retrieveData(data);
+        });
+      }
     }
-    if (this.path === 'courses') {
-      this.coursesService.getAllCourses();
-      this.coursesService.courses.subscribe((data) => {
-        this.data = data;
+  }
 
-        this.isData = Object.keys(this.data).length !== 0;
-        if (this.isData) this.dataToDisplay = [...this.data];
-        console.log(this.dataToDisplay);
-      });
-    }
+  retrieveData(data) {
+    this.data = data;
+    this.isData = this.data.length !== 0;
+    if (this.isData) this.dataToDisplay = [...this.data];
   }
 
   onNew() {
@@ -71,5 +89,6 @@ export class OptionsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.pathSub) this.pathSub.unsubscribe();
+    if (this.dataSub) this.dataSub.unsubscribe();
   }
 }

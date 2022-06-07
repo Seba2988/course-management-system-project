@@ -1,5 +1,6 @@
 <div class="container">
-  <button (click)="onNew()">Add {{ buttonText }}</button>
+  <button (click)="onNew()" *ngIf="!isStudent">Add {{ buttonText }}</button>
+  <div *ngIf="isData">My courses:</div>
   <input type="text" (input)="onSearch($event)" *ngIf="isData" />
   <app-option-link
     *ngFor="let item of dataToDisplay; let i = index"

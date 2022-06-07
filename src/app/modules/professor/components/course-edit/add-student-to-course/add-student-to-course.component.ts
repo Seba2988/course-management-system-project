@@ -17,11 +17,12 @@ import {
 })
 export class AddStudentToCourseComponent implements OnInit, OnDestroy {
   studentsSub: Subscription;
-  students: Student[];
-  studentsToDisplay: Student[];
+  students;
+  studentsToDisplay;
   course: Course;
   courseSub: Subscription;
   message: string = null;
+  courseId;
   constructor(
     private studentsService: StudentsService,
     private coursesService: CoursesService,
@@ -30,21 +31,26 @@ export class AddStudentToCourseComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.courseSub = this.coursesService.displayedCourse.subscribe((course) => {
-      this.course = course;
+    this.route.url.subscribe((url) => {
+      this.courseId = url[1].path;
+      console.log(this.courseId);
     });
-    // this.studentsService.getAllStudents();
-    this.coursesService.getAllStudentsAvailableToAdd(this.course._id);
-    this.studentsSub = this.coursesService.studentsAvailable.subscribe(
-      (students) => {
+    this.coursesService.getCourseById(this.courseId).subscribe({
+      next: (course: Course) => {
+        this.course = course;
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
+    this.studentsSub = this.coursesService
+      .getAllStudentsAvailableToAdd(this.courseId)
+      .subscribe((students) => {
         this.students = students;
-        this.studentsToDisplay = [...this.students];
-        // console.log(this.studentsToDisplay.length);
-        // if (this.students.length === 0) {
-        //   this.message = 'There are not students to add to this course';
-        // }
-      }
-    );
+        if (this.students.length !== 0)
+          this.studentsToDisplay = [...this.students];
+        else this.message = 'There are not students available';
+      });
   }
 
   onSearch(event) {
@@ -57,8 +63,7 @@ export class AddStudentToCourseComponent implements OnInit, OnDestroy {
   }
 
   onAdd(id) {
-    console.log(this.course._id, id);
-    this.coursesService.addStudentToCourse(this.course._id, id).subscribe({
+    this.coursesService.addStudentToCourse(this.courseId, id).subscribe({
       next: () => {
         this.message = 'The student has been added';
       },
@@ -66,14 +71,6 @@ export class AddStudentToCourseComponent implements OnInit, OnDestroy {
         this.message = err;
       },
     });
-    // this.coursesService.addStudentToCourse(this.course._id, id).subscribe({
-    //   next: () => {
-    //     this.message = 'The student has been added';
-    //   },
-    //   error: (err) => {
-    //     this.message = err;
-    //   },
-    // });
   }
 
   ngOnDestroy(): void {

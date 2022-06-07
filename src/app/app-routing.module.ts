@@ -10,14 +10,14 @@ const routes: Routes = [
       import('./modules/login/login.module').then((m) => m.LoginModule),
   },
   {
-    path: 'professor',
+    path: 'professors',
     loadChildren: () =>
       import('./modules/professor/professor.module').then(
         (m) => m.ProfessorModule
       ),
   },
   {
-    path: 'student',
+    path: 'students',
     loadChildren: () =>
       import('./modules/student/student.module').then((m) => m.StudentModule),
   },

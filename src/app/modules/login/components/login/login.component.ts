@@ -42,8 +42,8 @@ export class LoginComponent implements OnInit, OnDestroy {
           console.log(resData);
           this.isLoading = false;
           if (this.isStudent) {
-            this.router.navigate(['/student']);
-          } else this.router.navigate(['/professor']);
+            this.router.navigate(['/students']);
+          } else this.router.navigate(['/professors']);
         },
         error: (errMessage) => {
           this.error = errMessage.error.message;

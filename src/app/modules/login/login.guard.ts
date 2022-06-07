@@ -25,8 +25,10 @@ export class LoginGuard implements CanActivate {
     return this.loginService.isLoggedIn.pipe(
       take(1),
       map((isLogged) => {
-        if (isLogged) return true;
-        return this.router.createUrlTree(['/login']);
+        if (!isLogged) return true;
+        const studentToken = this.loginService.getStudentToken();
+        if (studentToken) return this.router.createUrlTree(['/students']);
+        return this.router.createUrlTree(['/professors']);
       })
     );
   }

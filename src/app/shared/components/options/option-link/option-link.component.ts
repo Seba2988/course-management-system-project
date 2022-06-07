@@ -29,13 +29,13 @@ export class OptionLinkComponent implements OnInit, OnDestroy {
 
   onClick() {
     if (this.path === 'students') {
-      this.studentsService.displayedStudent.next(this.index);
+      // this.studentsService.displayedStudent.next(this.index);
       this.router.navigate(['../student', this.index._id], {
         relativeTo: this.route,
       });
     }
     if (this.path === 'courses') {
-      this.coursesService.displayedCourse.next(this.index);
+      // this.coursesService.displayedCourse.next(this.index);
       this.router.navigate(['../course', this.index._id], {
         relativeTo: this.route,
       });

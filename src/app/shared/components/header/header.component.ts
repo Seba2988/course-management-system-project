@@ -24,13 +24,14 @@ export class HeaderComponent implements OnInit {
     if (!tokenData) {
       tokenData = JSON.parse(sessionStorage.getItem('professorToken'));
       if (!tokenData) return this.router.navigate(['/login']);
-      return this.router.navigate(['/professor']);
+      return this.router.navigate(['/professors']);
     }
-    return this.router.navigate(['/student']);
+    return this.router.navigate(['/students']);
   }
 
   onLogout() {
     const isStudent = sessionStorage.getItem('studentToken') ? true : false;
     this.loginService.logout(isStudent);
+    this.router.navigate(['/login']);
   }
 }

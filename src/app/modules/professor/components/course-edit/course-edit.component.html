@@ -1,12 +1,18 @@
 <div class="container">
-  <div>Course name: {{ course.name }}</div>
+  <div>Course name: {{ course.name | titlecase }}</div>
   <div>
     <div *ngIf="course.students.length !== 0">Student list</div>
-    <div *ngFor="let student of course.students">
-      {{ student.studentId.name | titlecase }}
-      {{ student.studentId.lastName | titlecase }}
+    <div *ngFor="let student of course.students" class="students-container">
+      <div class="students-details">
+        {{ student.studentId.name | titlecase }}
+        {{ student.studentId.lastName | titlecase }}
+      </div>
+      <button class="confirmButton">View attendance</button>
+      <button (click)="onDeleteStudent(student)" class="deleteButton">
+        Delete student
+      </button>
     </div>
   </div>
-  <button class="addStudentButton" routerLink="add-student">Add student</button>
-  <button (click)="onDelete()" class="deleteButton">Delete</button>
+  <button class="confirmButton" routerLink="add-student">Add student</button>
+  <button (click)="onDeleteCourse()" class="deleteButton">Delete</button>
 </div>

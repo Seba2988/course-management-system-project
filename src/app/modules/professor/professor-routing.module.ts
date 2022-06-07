@@ -11,12 +11,13 @@ import { AddStudentToCourseComponent } from './components/course-edit/add-studen
 import { CourseEditComponent } from './components/course-edit/course-edit.component';
 import { ProfessorDashboardComponent } from './components/professor-dashboard/professor-dashboard.component';
 import { StudentEditComponent } from './components/student-edit/student-edit.component';
+import { ProfessorGuard } from './services/professor.guard';
 
 const routes: Routes = [
   {
     path: '',
     component: ProfessorDashboardComponent,
-    canActivate: [LoginGuard],
+    canActivate: [ProfessorGuard],
     children: [
       { path: 'me', component: ManageAccountComponent },
       { path: 'students', component: OptionsComponent },

@@ -24,7 +24,7 @@ export class LoginService {
 
     return this.http.post<AuthResData>(url, { email, password }).pipe(
       tap((resData) => {
-        this.handleAuth(isStudent, resData.token);
+        this.handleAuth(isStudent, resData.token, resData);
       })
     );
   }
@@ -34,17 +34,15 @@ export class LoginService {
       `${isStudent ? 'studentToken' : 'professorToken'}`
     );
     this._isLoggedIn.next(false);
-
-    this.router.navigate(['/login']);
   }
-
   autoLogin() {
     const studentData = JSON.parse(sessionStorage.getItem('studentToken'));
     if (studentData) {
       const expDate = new Date(studentData.expDate);
       if (expDate >= new Date()) {
         this._isLoggedIn.next(true);
-        this.router.navigate(['/student']);
+      } else {
+        this.router.navigate(['/login']);
       }
     } else {
       const professorData = JSON.parse(
@@ -54,25 +52,34 @@ export class LoginService {
         const expDate = new Date(professorData.expDate);
         if (expDate >= new Date()) {
           this._isLoggedIn.next(true);
-          this.router.navigate(['/professor']);
+        } else {
+          this.router.navigate(['/login']);
         }
       }
     }
   }
 
-  private handleAuth(isStudent: boolean, token: string) {
+  private handleAuth(isStudent: boolean, token: string, user) {
     const expDate = new Date(new Date().getTime() + 3600000);
+    const userId = isStudent ? user.student._id : user.professor._id;
     sessionStorage.setItem(
       `${isStudent ? 'studentToken' : 'professorToken'}`,
-      JSON.stringify({ token, expDate })
+      JSON.stringify({ token, expDate, userId })
     );
     this._isLoggedIn.next(true);
   }
 
   getProfessorToken() {
     const professorData = JSON.parse(sessionStorage.getItem('professorToken'));
-    if (!professorData) throw new Error('Not logged');
+    if (!professorData) return undefined;
     const professorToken = professorData.token;
     return professorToken;
+  }
+
+  getStudentToken() {
+    const studentData = JSON.parse(sessionStorage.getItem('studentToken'));
+    if (!studentData) return undefined;
+    const studentToken = studentData.token;
+    return studentToken;
   }
 }

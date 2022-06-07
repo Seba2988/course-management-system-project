@@ -1,4 +1,11 @@
 <div class="container">
-  <div>{{ student.name }} {{ student.lastName }}</div>
+  <div>
+    Student name: {{ student.name | titlecase }}
+    {{ student.lastName | titlecase }}
+  </div>
+  <div>Courses:</div>
+  <div *ngFor="let course of student.courses">
+    {{ course.courseId.name | titlecase }}
+  </div>
   <button (click)="onDelete()">Delete</button>
 </div>
