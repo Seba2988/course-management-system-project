@@ -4,17 +4,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { LoginService } from 'src/app/modules/login/services/login.service';
 import { environment } from 'src/environments/environment';
-import { Course } from './courses.service';
+import * as DTO from '../models/DTO.model';
 
-export interface Student {
-  _id: string;
-  name: string;
-  lastName: string;
-  email: string;
-  address: string;
-  courses?: Course[];
-  dateOfBirth: Date;
-}
+// export interface Student {
+//   _id: string;
+//   name: string;
+//   lastName: string;
+//   email: string;
+//   address: string;
+//   courses?: Course[];
+//   dateOfBirth: Date;
+// }
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +24,7 @@ export class StudentsService {
   constructor(private http: HttpClient, private loginService: LoginService) {}
 
   getAllStudents() {
-    const url = 'http://localhost:3000/students/all';
+    const url = `${environment.ServerHost}/professor/students`;
     // const professorToken = this.loginService.getProfessorToken();
     // return this.http.get<Student[]>(url, {
     //   headers: new HttpHeaders({
@@ -32,16 +32,16 @@ export class StudentsService {
     //     Authorization: `Bearer ${professorToken}`,
     //   }),
     // });
-    return this.http.get<Student[]>(url);
+    return this.http.get(url);
   }
 
   getStudentById(id: string) {
-    const url = `${environment.ServerHost}/students/get-student/${id}`;
+    const url = `${environment.ServerHost}/professor/students/${id}`;
     return this.http.get(url);
   }
 
   deleteStudent(id: string) {
-    const url = `http://localhost:3000/students/delete/${id}`;
+    const url = `${environment.ServerHost}/professor/students/${id}`;
     // const professorToken = this.loginService.getProfessorToken();
     // return this.http.delete(url, {
     //   headers: new HttpHeaders({
@@ -53,7 +53,7 @@ export class StudentsService {
   }
 
   newStudent(student) {
-    const url = 'http://localhost:3000/students/new';
+    const url = `${environment.ServerHost}/student/signup`;
     // const professorToken = this.loginService.getProfessorToken();
     // return this.http.post(url, student, {
     //   headers: new HttpHeaders({

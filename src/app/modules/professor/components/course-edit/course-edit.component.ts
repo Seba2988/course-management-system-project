@@ -1,11 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import {
-  Course,
-  CoursesService,
-} from 'src/app/shared/services/courses.service';
-import { Student } from 'src/app/shared/services/students.service';
+import { CoursesService } from 'src/app/shared/services/courses.service';
+import * as DTO from '../../../../shared/models/DTO.model';
 
 @Component({
   selector: 'app-course-edit',
@@ -13,9 +10,11 @@ import { Student } from 'src/app/shared/services/students.service';
   styleUrls: ['./course-edit.component.scss'],
 })
 export class CourseEditComponent implements OnInit, OnDestroy {
-  course: Course;
+  course: DTO.Course;
   courseSub: Subscription;
   courseId: string;
+  message: string = null;
+  redirectUrl: string = null;
   constructor(
     private coursesService: CoursesService,
     private router: Router,
@@ -29,40 +28,45 @@ export class CourseEditComponent implements OnInit, OnDestroy {
     this.courseSub = this.coursesService
       .getCourseById(this.courseId)
       .subscribe({
-        next: (course: Course) => {
-          if (!course._id)
-            return this.router.navigate(['../../'], { relativeTo: this.route });
-          return (this.course = course);
+        next: (response: any) => {
+          console.log(response);
+          // console.log(course.Id);
+          this.course = response.result;
         },
         error: (err) => {
-          // console.log(err);
-          this.router.navigate(['../../'], { relativeTo: this.route });
+          console.log(err);
+          this.message = err.error.message;
+          this.redirectUrl = 'professors/courses';
+          // this.router.navigate(['error'], { relativeTo: this.route });
         },
       });
   }
 
   onDeleteCourse() {
+    // console.log(this.course);
     this.coursesService.deleteCourse(this.courseId).subscribe({
       next: () => {
         this.router.navigate(['../../courses'], { relativeTo: this.route });
-        // this.coursesService.displayedCourse.next(null);
+      },
+      error: (errMess) => {
+        console.log(errMess);
+        this.message = errMess.error;
       },
     });
   }
 
-  onDeleteStudent(student) {
-    // console.log(student.studentId._id);
-    const studentId = student.studentId._id;
+  onDeleteStudent(student: DTO.StudentInCourse) {
+    const studentId = student.id;
     this.coursesService
       .deleteStudentFromCourse(this.courseId, studentId)
       .subscribe({
-        next: (course: Course) => {
-          this.course = course;
-          console.log(this.course);
+        next: (response) => {
+          console.log(response);
           location.reload();
         },
         error: (err) => {
           console.log(err);
+          this.message = err.error.message;
         },
       });
   }

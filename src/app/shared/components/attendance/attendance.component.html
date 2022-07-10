@@ -1,0 +1,13 @@
+<div class="absence-container">
+  <app-absence
+    *ngFor="let absence of absences"
+    [absence]="absence"
+    [isStudent]="isStudent"
+  ></app-absence>
+</div>
+
+<app-modal
+  *ngIf="message"
+  [(message)]="message"
+  [redirectUrl]="redirectUrl"
+></app-modal>

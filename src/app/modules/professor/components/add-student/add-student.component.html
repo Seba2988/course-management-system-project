@@ -1,8 +1,13 @@
 <div class="container">
   <form [formGroup]="newStudentForm" (ngSubmit)="onSubmit()">
     <div>
-      <label for="name">Name</label>
-      <input type="text" name="name" id="name" formControlName="name" />
+      <label for="firstName">Name</label>
+      <input
+        type="text"
+        name="firstName"
+        id="firstName"
+        formControlName="firstName"
+      />
     </div>
     <div>
       <label for="lastName">Last name</label>
@@ -42,6 +47,15 @@
         name="password"
         id="password"
         formControlName="password"
+      />
+    </div>
+    <div>
+      <label for="confirmPassword">Confirm password</label>
+      <input
+        type="password"
+        name="confirmPassword"
+        id="confirmPassword"
+        formControlName="confirmPassword"
       />
     </div>
     <button [disabled]="!newStudentForm.valid">Submit</button>

@@ -5,12 +5,12 @@ import { Subscription } from 'rxjs';
 import { ManageAccountService } from '../../services/manage-account.service';
 
 export interface UpdatedFields {
-  name?: string;
-  lastName?: string;
-  email?: string;
-  password?: string;
-  dateOfBirth?: Date;
-  address?: string;
+  FirstName?: string;
+  LastName?: string;
+  Email?: string;
+  Password?: string;
+  DateOfBirth?: Date;
+  Address?: string;
 }
 
 @Component({
@@ -23,6 +23,7 @@ export class ManageAccountComponent implements OnInit, OnDestroy {
   updateForm: FormGroup;
   updateSub: Subscription;
   message: string = null;
+  redirectUrl: string = null;
 
   constructor(
     private router: Router,
@@ -31,10 +32,11 @@ export class ManageAccountComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.isStudent = this.router.url === '/student/me';
+    this.isStudent = this.router.url === '/students/me';
+    this.redirectUrl = this.router.url;
 
     this.updateForm = new FormGroup({
-      name: new FormControl(null, []),
+      FirstName: new FormControl(null, []),
       lastName: new FormControl(null, []),
       email: new FormControl(null, [Validators.email]),
       password: new FormControl(null, [
@@ -48,19 +50,19 @@ export class ManageAccountComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    const name = this.updateForm.value.name;
+    const name = this.updateForm.value.FirstName;
     const lastName = this.updateForm.value.lastName;
     const email = this.updateForm.value.email;
     const password = this.updateForm.value.password;
     const DoB = this.updateForm.value.DoB;
     const address = this.updateForm.value.address;
     const updatedFields: UpdatedFields = {};
-    if (name) updatedFields.name = name;
-    if (lastName) updatedFields.lastName = lastName;
-    if (email) updatedFields.email = email;
-    if (password) updatedFields.password = password;
-    if (DoB) updatedFields.dateOfBirth = DoB;
-    if (address) updatedFields.address = address;
+    if (name) updatedFields.FirstName = name;
+    if (lastName) updatedFields.LastName = lastName;
+    if (email) updatedFields.Email = email;
+    if (password) updatedFields.Password = password;
+    if (DoB) updatedFields.DateOfBirth = DoB;
+    if (address) updatedFields.Address = address;
     this.updateForm.reset();
     if (Object.keys(updatedFields).length === 0) {
       this.message = 'Your account has not been changed';
@@ -74,7 +76,8 @@ export class ManageAccountComponent implements OnInit, OnDestroy {
             this.message = 'Your account has been updated';
           },
           error: (errMessage) => {
-            this.message = errMessage;
+            console.log(errMessage);
+            this.message = errMessage.error.message;
             // console.log(errMessage);
           },
         });

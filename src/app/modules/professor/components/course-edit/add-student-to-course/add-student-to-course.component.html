@@ -1,6 +1,7 @@
 <div class="container">
+  <div>Students available:</div>
   <input type="text" (input)="onSearch($event)" />
-  <div *ngFor="let student of studentsToDisplay" (click)="onAdd(student._id)">
+  <div *ngFor="let student of studentsToDisplay" (click)="onAdd(student.id)">
     {{ student.name | titlecase }} {{ student.lastName | titlecase }}
   </div>
 </div>

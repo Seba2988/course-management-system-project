@@ -1,11 +1,21 @@
-<div class="container">
+<div class="container" *ngIf="!message">
   <div>
-    Student name: {{ student.name | titlecase }}
+    Student name: {{ student.firstName | titlecase }}
     {{ student.lastName | titlecase }}
   </div>
   <div>Courses:</div>
-  <div *ngFor="let course of student.courses">
-    {{ course.courseId.name | titlecase }}
+  <div *ngFor="let course of student.courses" class="courses-container">
+    <div class="course-details">
+      {{ course.name | titlecase }}
+    </div>
+    <button class="confirmButton" [routerLink]="['attendance', course.id]">
+      View attendance
+    </button>
   </div>
-  <button (click)="onDelete()">Delete</button>
+  <button class="deleteButton" (click)="onDelete()">Delete</button>
 </div>
+<app-modal
+  *ngIf="message"
+  [(message)]="message"
+  [redirectUrl]="redirectUrl"
+></app-modal>

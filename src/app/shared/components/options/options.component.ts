@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Course, CoursesService } from '../../services/courses.service';
-import { Student, StudentsService } from '../../services/students.service';
+import { CoursesService } from '../../services/courses.service';
+import { StudentsService } from '../../services/students.service';
+import * as DTO from '../../models/DTO.model';
 
 @Component({
   selector: 'app-options',
@@ -16,6 +17,7 @@ export class OptionsComponent implements OnInit, OnDestroy {
   isData: boolean = false;
   isStudent: boolean;
   dataSub: Subscription;
+  studentId: string = null;
   data;
   dataToDisplay;
   constructor(
@@ -31,20 +33,26 @@ export class OptionsComponent implements OnInit, OnDestroy {
     });
     this.isStudent = sessionStorage.getItem('studentToken') ? true : false;
     if (this.isStudent) {
-      this.dataSub = this.coursesService.getAllCoursesForStudent().subscribe({
-        next: (courses) => {
-          this.retrieveData(courses);
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
+      this.studentId = JSON.parse(
+        sessionStorage.getItem('studentToken')
+      ).userId;
+      this.dataSub = this.coursesService
+        .getAllCoursesForStudent(this.studentId)
+        .subscribe({
+          next: (response: any) => {
+            this.retrieveData(response.result);
+          },
+          error: (err) => {
+            console.log(err);
+          },
+        });
     } else {
       this.buttonText = this.path.slice(0, this.path.length - 1);
       if (this.path === 'students') {
         this.dataSub = this.studentsService.getAllStudents().subscribe({
-          next: (data) => {
-            this.retrieveData(data);
+          next: (response: any) => {
+            console.log(response);
+            this.retrieveData(response.result);
           },
           error: (err) => {
             console.log(err);
@@ -52,9 +60,14 @@ export class OptionsComponent implements OnInit, OnDestroy {
         });
       }
       if (this.path === 'courses') {
-        this.dataSub = this.coursesService.getAllCourses().subscribe((data) => {
-          console.log(data);
-          this.retrieveData(data);
+        this.dataSub = this.coursesService.getAllCourses().subscribe({
+          next: (response: any) => {
+            console.log(response);
+            this.retrieveData(response.result);
+          },
+          error: (err) => {
+            console.log(err);
+          },
         });
       }
     }
@@ -75,13 +88,13 @@ export class OptionsComponent implements OnInit, OnDestroy {
     const search: string = event.target.value;
     if (this.path === 'students') {
       this.dataToDisplay = this.data.filter(
-        (student: Student) =>
-          student.name.toLowerCase().includes(search.toLowerCase()) ||
+        (student: DTO.User) =>
+          student.firstName.toLowerCase().includes(search.toLowerCase()) ||
           student.lastName.toLowerCase().includes(search.toLowerCase())
       );
     }
     if (this.path === 'courses') {
-      this.dataToDisplay = this.data.filter((course: Course) =>
+      this.dataToDisplay = this.data.filter((course: DTO.Course) =>
         course.name.toLowerCase().includes(search.toLowerCase())
       );
     }

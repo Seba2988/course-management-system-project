@@ -26,11 +26,6 @@ export class AddCourseComponent implements OnInit {
         name: new FormControl(null, [Validators.required]),
         startingDate: new FormControl(null, [Validators.required]),
         endingDate: new FormControl(null, [Validators.required]),
-        day: new FormControl(null, [Validators.required]),
-        hour: new FormControl(null, [
-          Validators.required,
-          Validators.pattern(/^([8-9]|0[8-9]|1[0-9]|2[0]):([0-5]?[0-9])$/),
-        ]),
       },
       this.endingDateValidator
     );
@@ -39,12 +34,18 @@ export class AddCourseComponent implements OnInit {
   onSubmit() {
     if (!this.newCourseForm.valid) return;
     const course = this.newCourseForm.value;
+    course.professorId = JSON.parse(
+      sessionStorage.getItem('professorToken')
+    ).userId;
+    console.log(course);
     this.coursesService.newCourse(course).subscribe({
       next: () => {
         this.message = 'The new course has been added';
       },
-      error: () => {
-        this.message = 'Error!';
+      error: (err) => {
+        this.message = err.error.message
+          ? err.error.message
+          : err.error.errors.StartingDate[0];
       },
     });
   }

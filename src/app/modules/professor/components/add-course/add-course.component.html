@@ -7,7 +7,7 @@
     <div>
       <label for="startingDate">Starting date</label>
       <input
-        type="date"
+        type="datetime-local"
         name="startingDate"
         id="startingDate"
         formControlName="startingDate"
@@ -16,20 +16,20 @@
     <div>
       <label for="endingDate">Ending date</label>
       <input
-        type="date"
+        type="datetime-local"
         name="endingDate"
         id="endingDate"
         formControlName="endingDate"
       />
     </div>
-    <div>
+    <!-- <div>
       <label for="day">Day of the week</label>
       <input type="text" name="day" id="day" formControlName="day" />
     </div>
     <div>
       <label for="hour">Hour</label>
       <input type="text" name="hour" id="hour" formControlName="hour" />
-    </div>
+    </div> -->
     <button [disabled]="!newCourseForm.valid">Submit</button>
   </form>
   <button routerLink="../">Back</button>

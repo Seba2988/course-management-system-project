@@ -32,6 +32,5 @@ export class HeaderComponent implements OnInit {
   onLogout() {
     const isStudent = sessionStorage.getItem('studentToken') ? true : false;
     this.loginService.logout(isStudent);
-    this.router.navigate(['/login']);
   }
 }

@@ -5,6 +5,13 @@
   width: 80vw;
   gap: 5px;
   align-items: flex-start;
+  input {
+    border-radius: 10px;
+    outline: none;
+    border: 1px solid black;
+    padding: 2px;
+    width: 300px;
+  }
   button {
     height: 2rem;
     margin: 0.5rem;

@@ -1,10 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import {
-  Student,
-  StudentsService,
-} from 'src/app/shared/services/students.service';
+import { StudentsService } from 'src/app/shared/services/students.service';
+import * as DTO from '../../../../shared/models/DTO.model';
 
 @Component({
   selector: 'app-student-edit',
@@ -12,9 +10,11 @@ import {
   styleUrls: ['./student-edit.component.scss'],
 })
 export class StudentEditComponent implements OnInit, OnDestroy {
-  student: Student;
+  student: DTO.User;
   studentId: string;
   studentSub: Subscription;
+  message: string = null;
+  redirectUrl: string = null;
   constructor(
     private studentsService: StudentsService,
     private router: Router,
@@ -28,16 +28,20 @@ export class StudentEditComponent implements OnInit, OnDestroy {
     this.studentSub = this.studentsService
       .getStudentById(this.studentId)
       .subscribe({
-        next: (student: Student) => {
-          if (!student._id)
+        next: (response: any) => {
+          if (!response.result.id)
             return this.router.navigate(['../../'], { relativeTo: this.route });
-          return (this.student = student);
+          return (this.student = response.result);
+        },
+        error: (err: any) => {
+          this.message = err.error.message;
+          this.redirectUrl = 'professors/students';
         },
       });
   }
 
   onDelete() {
-    this.studentsService.deleteStudent(this.student._id).subscribe({
+    this.studentsService.deleteStudent(this.student.id).subscribe({
       next: () => {
         this.router.navigate(['../../students'], { relativeTo: this.route });
         // this.studentsService.displayedStudent.next(null);

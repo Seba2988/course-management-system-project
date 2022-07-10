@@ -1,0 +1,29 @@
+.absence-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid black;
+  padding: 5px;
+  border-radius: 15px;
+  cursor: default;
+  background-color: crimson;
+  transition: all 0.2s linear;
+  width: 10rem;
+  &.isStudent {
+    cursor: pointer;
+    &:not(.isFuture) {
+      &:hover {
+        transform: scale(1.2);
+      }
+    }
+  }
+  &.isPresent {
+    background-color: lightgreen;
+  }
+  &.isFuture {
+    background-color: transparent;
+    cursor: not-allowed;
+  }
+}

@@ -5,7 +5,21 @@
   margin: 0.5rem auto;
   gap: 1rem;
   align-items: center;
-  button {
+  .confirmButton {
+    height: 2rem;
+    margin: 0.5rem;
+    background-color: darkslategrey;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.1s linear;
+    &:hover {
+      color: darkslategrey;
+      background-color: white;
+    }
+  }
+  .deleteButton {
     height: 2rem;
     margin: 0.5rem;
     background-color: red;
@@ -17,6 +31,15 @@
     &:hover {
       color: red;
       background-color: white;
+    }
+  }
+  .courses-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    .course-details {
+      width: 200px;
+      justify-self: flex-start;
     }
   }
 }

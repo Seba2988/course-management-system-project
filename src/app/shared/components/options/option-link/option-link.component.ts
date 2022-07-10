@@ -13,6 +13,7 @@ export class OptionLinkComponent implements OnInit, OnDestroy {
   @Input() index;
   pathSub: Subscription;
   path: string;
+  navigateTo: string;
 
   constructor(
     private router: Router,
@@ -28,18 +29,18 @@ export class OptionLinkComponent implements OnInit, OnDestroy {
   }
 
   onClick() {
+    // console.log(this.index);
     if (this.path === 'students') {
+      this.navigateTo = '../student';
       // this.studentsService.displayedStudent.next(this.index);
-      this.router.navigate(['../student', this.index._id], {
-        relativeTo: this.route,
-      });
     }
     if (this.path === 'courses') {
       // this.coursesService.displayedCourse.next(this.index);
-      this.router.navigate(['../course', this.index._id], {
-        relativeTo: this.route,
-      });
+      this.navigateTo = '../course';
     }
+    this.router.navigate([this.navigateTo, this.index.id], {
+      relativeTo: this.route,
+    });
   }
 
   ngOnDestroy(): void {

@@ -3,21 +3,22 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { LoginService } from 'src/app/modules/login/services/login.service';
 import { environment } from 'src/environments/environment';
-import { Student, StudentsService } from './students.service';
+import { StudentsService } from './students.service';
+import * as DTO from '../models/DTO.model';
 
-export interface Course {
-  courseId?: { _id: string; name?: string };
-  _id: string;
-  name: string;
-  startingDate: Date;
-  endingDate: Date;
-  day: string;
-  hour: string;
-  students?: {
-    studentId: Student;
-    attendance: { date: Date; attended: boolean }[];
-  }[];
-}
+// export interface Course {
+//   courseId?: { _id: string; name?: string };
+//   _id: string;
+//   name: string;
+//   startingDate: Date;
+//   endingDate: Date;
+//   //day: string;
+//   //hour: string;
+//   students?: {
+//     studentId: Student;
+//     attendance: { date: Date; attended: boolean }[];
+//   }[];
+// }
 
 @Injectable({
   providedIn: 'root',
@@ -37,12 +38,12 @@ export class CoursesService {
   ) {}
 
   getAllCourses() {
-    const url = `${environment.ServerHost}/courses/all`;
-    return this.http.get<Course[]>(url);
+    const url = `${environment.ServerHost}/courses`;
+    return this.http.get(url);
   }
 
   newCourse(course) {
-    const url = `${environment.ServerHost}/courses/new`;
+    const url = `${environment.ServerHost}/courses`;
     // const professorToken = this.loginService.getProfessorToken();
     // return this.http.post(url, course, {
     //   headers: new HttpHeaders({
@@ -54,12 +55,12 @@ export class CoursesService {
   }
 
   getCourseById(id: string) {
-    const url = `${environment.ServerHost}/courses/get-course/${id}`;
+    const url = `${environment.ServerHost}/courses/${id}`;
     return this.http.get(url);
   }
 
   deleteCourse(id: string) {
-    const url = `${environment.ServerHost}/courses/delete/${id}`;
+    const url = `${environment.ServerHost}/courses/${id}`;
     // const professorToken = this.loginService.getProfessorToken();
     // return this.http.delete(url, {
     //   headers: new HttpHeaders({
@@ -70,18 +71,18 @@ export class CoursesService {
   }
 
   addStudentToCourse(courseId: string, studentId: string) {
-    const url = `${environment.ServerHost}/courses/${courseId}/add-student/${studentId}`;
+    const url = `${environment.ServerHost}/courses/${courseId}/students`;
     // const professorToken = this.loginService.getProfessorToken();
     // return this.http.patch(url, null, {
     //   headers: new HttpHeaders({
     //     Authorization: `Bearer ${professorToken}`,
     //   }),
     // });
-    return this.http.patch(url, null);
+    return this.http.post(url, { userId: studentId });
   }
 
   deleteStudentFromCourse(courseId: string, studentId: string) {
-    const url = `${environment.ServerHost}/courses/${courseId}/delete-student/${studentId}`;
+    const url = `${environment.ServerHost}/courses/${courseId}/students/${studentId}`;
     // const professorToken = this.loginService.getProfessorToken();
     // return this.http.patch(url, null, {
     //   headers: new HttpHeaders({
@@ -92,16 +93,13 @@ export class CoursesService {
   }
 
   getAllStudentsAvailableToAdd(courseId: string) {
-    const url = `${environment.ServerHost}/courses/${courseId}/all-available-students`;
+    const url = `${environment.ServerHost}/student/notInCourse=${courseId}`;
     // const professorToken = this.loginService.getProfessorToken();
     return this.http.get(url);
   }
 
-  getAllCoursesForStudent() {
-    const studentData = JSON.parse(sessionStorage.getItem('studentToken'));
-    if (!studentData) return undefined;
-    const studentId = studentData.userId;
-    const url = `${environment.ServerHost}/students/${studentId}/all-courses`;
+  getAllCoursesForStudent(studentId: string) {
+    const url = `${environment.ServerHost}/student/${studentId}/courses`;
     return this.http.get(url);
   }
 }

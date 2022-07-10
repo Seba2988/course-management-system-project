@@ -1,6 +1,6 @@
 <div class="container">
   <button (click)="onNew()" *ngIf="!isStudent">Add {{ buttonText }}</button>
-  <div *ngIf="isData">My courses:</div>
+  <div *ngIf="isData && path === 'courses' && isStudent">My courses:</div>
   <input type="text" (input)="onSearch($event)" *ngIf="isData" />
   <app-option-link
     *ngFor="let item of dataToDisplay; let i = index"

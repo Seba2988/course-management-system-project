@@ -1,0 +1,26 @@
+<div class="form-container">
+  <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
+    <div>
+      <label for="isPresent">Were you present on this lesson?</label>
+      <select name="isPresent" id="isPresent" formControlName="isPresent">
+        <option [ngValue]="true">Yes</option>
+        <option [ngValue]="false">No</option>
+      </select>
+    </div>
+    <div *ngIf="!editForm.get('isPresent').value">
+      <label for="reasonOfAbsence">Why?</label>
+      <input
+        type="text"
+        name="reasonOfAbsence"
+        id="reasonOfAbsence"
+        formControlName="reasonOfAbsence"
+      />
+    </div>
+    <button [disabled]="!editForm.valid">Submit</button>
+  </form>
+</div>
+<app-modal
+  *ngIf="message"
+  [(message)]="message"
+  [redirectUrl]="redirectUrl"
+></app-modal>

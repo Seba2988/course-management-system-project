@@ -1,14 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import {
-  Course,
-  CoursesService,
-} from 'src/app/shared/services/courses.service';
-import {
-  Student,
-  StudentsService,
-} from 'src/app/shared/services/students.service';
+import { CoursesService } from 'src/app/shared/services/courses.service';
+import { StudentsService } from 'src/app/shared/services/students.service';
+import * as DTO from '../../../../../shared/models/DTO.model';
 
 @Component({
   selector: 'app-add-student-to-course',
@@ -19,7 +14,7 @@ export class AddStudentToCourseComponent implements OnInit, OnDestroy {
   studentsSub: Subscription;
   students;
   studentsToDisplay;
-  course: Course;
+  course: DTO.Course;
   courseSub: Subscription;
   message: string = null;
   courseId;
@@ -33,42 +28,39 @@ export class AddStudentToCourseComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.url.subscribe((url) => {
       this.courseId = url[1].path;
-      console.log(this.courseId);
-    });
-    this.coursesService.getCourseById(this.courseId).subscribe({
-      next: (course: Course) => {
-        this.course = course;
-      },
-      error: (err) => {
-        console.log(err);
-      },
     });
     this.studentsSub = this.coursesService
       .getAllStudentsAvailableToAdd(this.courseId)
-      .subscribe((students) => {
-        this.students = students;
-        if (this.students.length !== 0)
-          this.studentsToDisplay = [...this.students];
-        else this.message = 'There are not students available';
+      .subscribe({
+        next: (response: any) => {
+          this.students = response.result;
+          if (this.students.length !== 0)
+            this.studentsToDisplay = [...this.students];
+          else this.message = 'There are not students available';
+        },
+        error: (errMess) => {
+          this.message = errMess.error.message;
+        },
       });
   }
 
   onSearch(event) {
     const search: string = event.target.value.toLowerCase();
     this.studentsToDisplay = this.students.filter(
-      (student: Student) =>
-        student.name.toLowerCase().includes(search) ||
+      (student: DTO.User) =>
+        student.firstName.toLowerCase().includes(search) ||
         student.lastName.toLowerCase().includes(search)
     );
   }
 
-  onAdd(id) {
+  onAdd(id: string) {
     this.coursesService.addStudentToCourse(this.courseId, id).subscribe({
-      next: () => {
-        this.message = 'The student has been added';
+      next: (response: any) => {
+        this.message = response.result;
       },
       error: (err) => {
-        this.message = err;
+        console.log(err);
+        this.message = err.error.message;
       },
     });
   }

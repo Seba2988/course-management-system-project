@@ -2,11 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, tap } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
-export interface AuthResData {
-  user: {};
-  token: string;
-}
+// export interface AuthResData {
+//   // user: {};
+//   token: string;
+// }
 
 @Injectable({
   providedIn: 'root',
@@ -18,22 +19,29 @@ export class LoginService {
   constructor(private http: HttpClient, private router: Router) {}
 
   login(email: string, password: string, isStudent: boolean) {
-    const url = `http://localhost:3000/${
-      isStudent ? 'students' : 'professors'
+    const url = `${environment.ServerHost}/${
+      isStudent ? 'student' : 'professor'
     }/login`;
-
-    return this.http.post<AuthResData>(url, { email, password }).pipe(
-      tap((resData) => {
-        this.handleAuth(isStudent, resData.token, resData);
+    return this.http.post(url, { email, password }).pipe(
+      tap((response: any) => {
+        this.handleAuth(isStudent, response);
       })
     );
   }
 
   logout(isStudent: boolean) {
-    sessionStorage.removeItem(
-      `${isStudent ? 'studentToken' : 'professorToken'}`
-    );
-    this._isLoggedIn.next(false);
+    const url = `${environment.ServerHost}/${
+      isStudent ? 'student' : 'professor'
+    }/logout`;
+    this.http.get(url).subscribe({
+      next: () => {
+        sessionStorage.removeItem(
+          `${isStudent ? 'studentToken' : 'professorToken'}`
+        );
+        this._isLoggedIn.next(false);
+        this.router.navigate(['/login']);
+      },
+    });
   }
   autoLogin() {
     const studentData = JSON.parse(sessionStorage.getItem('studentToken'));
@@ -59,9 +67,19 @@ export class LoginService {
     }
   }
 
-  private handleAuth(isStudent: boolean, token: string, user) {
+  // private handleAuth(isStudent: boolean, token: string, user) {
+  //   const expDate = new Date(new Date().getTime() + 3600000);
+  //   const userId = isStudent ? user.student._id : user.professor._id;
+  //   sessionStorage.setItem(
+  //     `${isStudent ? 'studentToken' : 'professorToken'}`,
+  //     JSON.stringify({ token, expDate, userId })
+  //   );
+  //   this._isLoggedIn.next(true);
+  // }
+  private handleAuth(isStudent: boolean, response: any) {
     const expDate = new Date(new Date().getTime() + 3600000);
-    const userId = isStudent ? user.student._id : user.professor._id;
+    const token = response.result.token;
+    const userId = response.result.userId;
     sessionStorage.setItem(
       `${isStudent ? 'studentToken' : 'professorToken'}`,
       JSON.stringify({ token, expDate, userId })

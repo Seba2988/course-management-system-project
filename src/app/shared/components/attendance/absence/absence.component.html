@@ -1,0 +1,6 @@
+<div class="absence-container" [ngClass]="color" (click)="onClick()">
+  <div class="date">{{ absence.class.date | date }}</div>
+  <div class="reasonOfAbsence" *ngIf="absence.reasonOfAbsence">
+    {{ absence.reasonOfAbsence }}
+  </div>
+</div>
