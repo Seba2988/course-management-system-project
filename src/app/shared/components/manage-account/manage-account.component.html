@@ -1,12 +1,12 @@
 <div class="container">
   <form [formGroup]="updateForm" (ngSubmit)="onSubmit()">
     <div>
-      <label for="FirstName">Name</label>
+      <label for="firstName">Name</label>
       <input
         type="text"
-        name="FirstName"
-        id="FirstName"
-        formControlName="FirstName"
+        name="firstName"
+        id="firstName"
+        formControlName="firstName"
       />
     </div>
     <div>
@@ -47,9 +47,3 @@
     <button [disabled]="!updateForm.valid">Submit</button>
   </form>
 </div>
-
-<app-modal
-  *ngIf="message"
-  [(message)]="message"
-  [redirectUrl]="redirectUrl"
-></app-modal>

@@ -2,6 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { ModalService } from 'src/app/shared/services/modal.service';
+import { ValidatorsService } from 'src/app/shared/services/validators.service';
 import { LoginService } from '../../services/login.service';
 
 @Component({
@@ -12,20 +14,23 @@ import { LoginService } from '../../services/login.service';
 export class LoginComponent implements OnInit, OnDestroy {
   isStudent = true;
   loginForm: FormGroup;
-  error: string = null;
   loginSub: Subscription;
   isLoading = false;
+  redirectUrl: string = 'login';
 
-  constructor(private loginService: LoginService, private router: Router) {}
+  constructor(
+    private loginService: LoginService,
+    private router: Router,
+    private modalService: ModalService,
+    private validatorsService: ValidatorsService
+  ) {}
 
   ngOnInit(): void {
     this.loginForm = new FormGroup({
       email: new FormControl(null, [Validators.required, Validators.email]),
       password: new FormControl(null, [
         Validators.required,
-        Validators.pattern(
-          /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#/\$%\^&\*]).{8,}$/
-        ),
+        Validators.pattern(this.validatorsService.passwordRegex),
       ]),
     });
   }
@@ -47,15 +52,13 @@ export class LoginComponent implements OnInit, OnDestroy {
         },
         error: (errMessage) => {
           console.log(errMessage);
-          this.error = errMessage.error;
           this.loginForm.reset();
-          // console.log(errMessage.error);
+          this.modalService.openModal(
+            this.redirectUrl,
+            errMessage.error.message
+          );
         },
       });
-    // this.loginForm.reset();
-    // if (this.isStudent) {
-    //   this.router.navigate(['/student']);
-    // } else this.router.navigate(['/professor']);
   }
 
   onSelect() {

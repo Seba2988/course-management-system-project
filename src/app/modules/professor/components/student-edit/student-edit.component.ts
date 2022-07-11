@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { User } from 'src/app/shared/models/User.model';
+import { ModalService } from 'src/app/shared/services/modal.service';
 import { StudentsService } from 'src/app/shared/services/students.service';
-import * as DTO from '../../../../shared/models/DTO.model';
 
 @Component({
   selector: 'app-student-edit',
@@ -10,15 +11,15 @@ import * as DTO from '../../../../shared/models/DTO.model';
   styleUrls: ['./student-edit.component.scss'],
 })
 export class StudentEditComponent implements OnInit, OnDestroy {
-  student: DTO.User;
+  student: User;
   studentId: string;
   studentSub: Subscription;
-  message: string = null;
-  redirectUrl: string = null;
+  redirectUrl: string = '/professors/students';
   constructor(
     private studentsService: StudentsService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -29,13 +30,13 @@ export class StudentEditComponent implements OnInit, OnDestroy {
       .getStudentById(this.studentId)
       .subscribe({
         next: (response: any) => {
-          if (!response.result.id)
-            return this.router.navigate(['../../'], { relativeTo: this.route });
-          return (this.student = response.result);
+          console.log(response);
+          if (!response.result.id) this.router.navigate([this.redirectUrl]);
+          else this.student = response.result;
+          console.log(this.student);
         },
         error: (err: any) => {
-          this.message = err.error.message;
-          this.redirectUrl = 'professors/students';
+          this.modalService.openModal(this.redirectUrl, err.error.message);
         },
       });
   }
@@ -43,11 +44,12 @@ export class StudentEditComponent implements OnInit, OnDestroy {
   onDelete() {
     this.studentsService.deleteStudent(this.student.id).subscribe({
       next: () => {
-        this.router.navigate(['../../students'], { relativeTo: this.route });
-        // this.studentsService.displayedStudent.next(null);
+        this.router.navigate([this.redirectUrl]);
       },
     });
   }
+
+  onDeleteFromCourse() {}
   ngOnDestroy(): void {
     if (this.studentSub) this.studentSub.unsubscribe();
   }

@@ -1,13 +1,9 @@
-import { ValueConverter } from '@angular/compiler/src/render3/view/template';
-import { Component, OnInit } from '@angular/core';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  Validators,
-} from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Course } from 'src/app/shared/models/Course.model';
 import { CoursesService } from 'src/app/shared/services/courses.service';
+import { ModalService } from 'src/app/shared/services/modal.service';
+import { ValidatorsService } from 'src/app/shared/services/validators.service';
 
 @Component({
   selector: 'app-add-course',
@@ -16,9 +12,13 @@ import { CoursesService } from 'src/app/shared/services/courses.service';
 })
 export class AddCourseComponent implements OnInit {
   newCourseForm: FormGroup;
-  message: string = null;
+  redirectUrl: string = '/professors/courses';
 
-  constructor(private coursesService: CoursesService) {}
+  constructor(
+    private coursesService: CoursesService,
+    private modalService: ModalService,
+    private validatorsService: ValidatorsService
+  ) {}
 
   ngOnInit(): void {
     this.newCourseForm = new FormGroup(
@@ -27,34 +27,32 @@ export class AddCourseComponent implements OnInit {
         startingDate: new FormControl(null, [Validators.required]),
         endingDate: new FormControl(null, [Validators.required]),
       },
-      this.endingDateValidator
+      this.validatorsService.endingDateValidator
     );
   }
 
   onSubmit() {
     if (!this.newCourseForm.valid) return;
-    const course = this.newCourseForm.value;
+    const course: Course = this.newCourseForm.value;
     course.professorId = JSON.parse(
       sessionStorage.getItem('professorToken')
     ).userId;
     console.log(course);
     this.coursesService.newCourse(course).subscribe({
       next: () => {
-        this.message = 'The new course has been added';
+        this.modalService.openModal(
+          this.redirectUrl,
+          'The new course has been added'
+        );
       },
       error: (err) => {
-        this.message = err.error.message
-          ? err.error.message
-          : err.error.errors.StartingDate[0];
+        this.modalService.openModal(
+          this.redirectUrl,
+          err.error.message
+            ? err.error.message
+            : err.error.errors.StartingDate[0]
+        );
       },
     });
-  }
-
-  endingDateValidator(fg: FormGroup): ValidationErrors | null {
-    const endingDate = new Date(fg.get('endingDate').value);
-    const startingDate = new Date(fg.get('startingDate').value);
-
-    if (endingDate <= startingDate) return { endingError: fg.value };
-    return null;
   }
 }

@@ -1,8 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { Course } from 'src/app/shared/models/Course.model';
+import { StudentInCourse } from 'src/app/shared/models/StudentInCourse.model';
 import { CoursesService } from 'src/app/shared/services/courses.service';
-import * as DTO from '../../../../shared/models/DTO.model';
+import { ModalService } from 'src/app/shared/services/modal.service';
 
 @Component({
   selector: 'app-course-edit',
@@ -10,15 +12,14 @@ import * as DTO from '../../../../shared/models/DTO.model';
   styleUrls: ['./course-edit.component.scss'],
 })
 export class CourseEditComponent implements OnInit, OnDestroy {
-  course: DTO.Course;
+  course: Course;
   courseSub: Subscription;
   courseId: string;
-  message: string = null;
-  redirectUrl: string = null;
+  redirectUrl: string = '/professors/courses';
   constructor(
     private coursesService: CoursesService,
-    private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -29,33 +30,27 @@ export class CourseEditComponent implements OnInit, OnDestroy {
       .getCourseById(this.courseId)
       .subscribe({
         next: (response: any) => {
-          console.log(response);
-          // console.log(course.Id);
           this.course = response.result;
         },
-        error: (err) => {
-          console.log(err);
-          this.message = err.error.message;
-          this.redirectUrl = 'professors/courses';
-          // this.router.navigate(['error'], { relativeTo: this.route });
+        error: (err: any) => {
+          this.modalService.openModal(this.redirectUrl, err.error.message);
         },
       });
   }
 
   onDeleteCourse() {
-    // console.log(this.course);
     this.coursesService.deleteCourse(this.courseId).subscribe({
-      next: () => {
-        this.router.navigate(['../../courses'], { relativeTo: this.route });
+      next: (response: any) => {
+        this.modalService.openModal(this.redirectUrl, response.result);
       },
       error: (errMess) => {
         console.log(errMess);
-        this.message = errMess.error;
+        this.modalService.openModal(this.redirectUrl, errMess.error.message);
       },
     });
   }
 
-  onDeleteStudent(student: DTO.StudentInCourse) {
+  onDeleteStudent(student: StudentInCourse) {
     const studentId = student.id;
     this.coursesService
       .deleteStudentFromCourse(this.courseId, studentId)
@@ -66,7 +61,7 @@ export class CourseEditComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.log(err);
-          this.message = err.error.message;
+          this.modalService.openModal(this.redirectUrl, err.error.message);
         },
       });
   }

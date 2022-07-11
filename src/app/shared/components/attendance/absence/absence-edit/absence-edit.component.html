@@ -19,8 +19,3 @@
     <button [disabled]="!editForm.valid">Submit</button>
   </form>
 </div>
-<app-modal
-  *ngIf="message"
-  [(message)]="message"
-  [redirectUrl]="redirectUrl"
-></app-modal>

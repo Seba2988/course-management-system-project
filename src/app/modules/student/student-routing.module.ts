@@ -5,7 +5,7 @@ import { AttendanceComponent } from 'src/app/shared/components/attendance/attend
 import { DashboardComponent } from 'src/app/shared/components/dashboard/dashboard.component';
 import { ManageAccountComponent } from 'src/app/shared/components/manage-account/manage-account.component';
 import { OptionsComponent } from 'src/app/shared/components/options/options.component';
-import { StudentGuard } from './services/student.guard';
+import { StudentGuard } from './Guards/student.guard';
 
 const routes: Routes = [
   {

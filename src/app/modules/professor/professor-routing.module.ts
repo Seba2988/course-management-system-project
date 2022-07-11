@@ -4,7 +4,7 @@ import { AttendanceComponent } from 'src/app/shared/components/attendance/attend
 import { DashboardComponent } from 'src/app/shared/components/dashboard/dashboard.component';
 import { ManageAccountComponent } from 'src/app/shared/components/manage-account/manage-account.component';
 import { OptionsComponent } from 'src/app/shared/components/options/options.component';
-import { LoginGuard } from '../login/login.guard';
+import { LoginGuard } from '../login/services/login.guard';
 
 import { AddCourseComponent } from './components/add-course/add-course.component';
 
@@ -12,7 +12,7 @@ import { AddStudentComponent } from './components/add-student/add-student.compon
 import { AddStudentToCourseComponent } from './components/course-edit/add-student-to-course/add-student-to-course.component';
 import { CourseEditComponent } from './components/course-edit/course-edit.component';
 import { StudentEditComponent } from './components/student-edit/student-edit.component';
-import { ProfessorGuard } from './services/professor.guard';
+import { ProfessorGuard } from './Guards/professor.guard';
 
 const routes: Routes = [
   {

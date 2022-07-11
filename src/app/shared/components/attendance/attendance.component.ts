@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import * as DTO from '../../models/DTO.model';
+import { Absence } from '../../models/Absence.model';
 import { AttendanceService } from '../../services/attendance.service';
-import { StudentsService } from '../../services/students.service';
+import { ModalService } from '../../services/modal.service';
 
 @Component({
   selector: 'app-attendance',
@@ -11,27 +11,25 @@ import { StudentsService } from '../../services/students.service';
   styleUrls: ['./attendance.component.scss'],
 })
 export class AttendanceComponent implements OnInit {
-  absences: DTO.Absence[];
+  absences: Absence[];
   absSub: Subscription;
   courseId: string;
   studentId: string;
-  message: string = null;
-  redirectUrl: string = null;
+  redirectUrl: string;
   isStudent: boolean;
   constructor(
-    private studentsService: StudentsService,
     private router: Router,
     private route: ActivatedRoute,
-    private attendanceService: AttendanceService
+    private attendanceService: AttendanceService,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
     this.route.url.subscribe((url) => {
-      // console.log(url);
       this.isStudent =
         this.router.url.slice(1, this.router.url.indexOf('/', 1)) ===
         'students';
-      // console.log(this.isStudent);
+
       if (!this.isStudent) {
         this.courseId = url[3].path;
         this.studentId = url[1].path;
@@ -41,21 +39,19 @@ export class AttendanceComponent implements OnInit {
           sessionStorage.getItem('studentToken')
         ).userId;
       }
+      this.redirectUrl = this.isStudent
+        ? 'students/courses'
+        : `professors/student/${this.studentId}`;
     });
     this.absSub = this.attendanceService
       .getAbsencesForStudentForCouse(this.studentId, this.courseId)
       .subscribe({
         next: (response: any) => {
-          // console.log(response);
           this.absences = response.result;
-          // console.log(this.absences);
         },
         error: (err) => {
           console.log(err);
-          this.message = err.error.message;
-          this.redirectUrl = this.isStudent
-            ? 'students/courses'
-            : `professors/student/${this.studentId}`;
+          this.modalService.openModal(this.redirectUrl, err.error.message);
         },
       });
   }

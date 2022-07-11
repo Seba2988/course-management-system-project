@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import * as DTO from '../../../models/DTO.model';
+import { Absence } from 'src/app/shared/models/Absence.model';
 
 @Component({
   selector: 'app-absence',
@@ -8,7 +8,7 @@ import * as DTO from '../../../models/DTO.model';
   styleUrls: ['./absence.component.scss'],
 })
 export class AbsenceComponent implements OnInit {
-  @Input() absence: DTO.Absence;
+  @Input() absence: Absence;
   @Input() isStudent: boolean;
   color = {
     isPresent: false,

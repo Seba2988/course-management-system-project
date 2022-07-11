@@ -1,9 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { Course } from 'src/app/shared/models/Course.model';
+import { User } from 'src/app/shared/models/User.model';
 import { CoursesService } from 'src/app/shared/services/courses.service';
-import { StudentsService } from 'src/app/shared/services/students.service';
-import * as DTO from '../../../../../shared/models/DTO.model';
+import { ModalService } from 'src/app/shared/services/modal.service';
 
 @Component({
   selector: 'app-add-student-to-course',
@@ -14,20 +15,20 @@ export class AddStudentToCourseComponent implements OnInit, OnDestroy {
   studentsSub: Subscription;
   students;
   studentsToDisplay;
-  course: DTO.Course;
+  course: Course;
   courseSub: Subscription;
-  message: string = null;
+  redirectUrl: string;
   courseId;
   constructor(
-    private studentsService: StudentsService,
     private coursesService: CoursesService,
     private route: ActivatedRoute,
-    private router: Router
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
     this.route.url.subscribe((url) => {
       this.courseId = url[1].path;
+      this.redirectUrl = `/professors/course/${this.courseId}`;
     });
     this.studentsSub = this.coursesService
       .getAllStudentsAvailableToAdd(this.courseId)
@@ -36,10 +37,14 @@ export class AddStudentToCourseComponent implements OnInit, OnDestroy {
           this.students = response.result;
           if (this.students.length !== 0)
             this.studentsToDisplay = [...this.students];
-          else this.message = 'There are not students available';
+          else
+            this.modalService.openModal(
+              this.redirectUrl,
+              'There are not students available'
+            );
         },
         error: (errMess) => {
-          this.message = errMess.error.message;
+          this.modalService.openModal(this.redirectUrl, errMess.error.message);
         },
       });
   }
@@ -47,7 +52,7 @@ export class AddStudentToCourseComponent implements OnInit, OnDestroy {
   onSearch(event) {
     const search: string = event.target.value.toLowerCase();
     this.studentsToDisplay = this.students.filter(
-      (student: DTO.User) =>
+      (student: User) =>
         student.firstName.toLowerCase().includes(search) ||
         student.lastName.toLowerCase().includes(search)
     );
@@ -56,11 +61,11 @@ export class AddStudentToCourseComponent implements OnInit, OnDestroy {
   onAdd(id: string) {
     this.coursesService.addStudentToCourse(this.courseId, id).subscribe({
       next: (response: any) => {
-        this.message = response.result;
+        this.modalService.openModal(this.redirectUrl, response.result);
       },
       error: (err) => {
         console.log(err);
-        this.message = err.error.message;
+        this.modalService.openModal(this.redirectUrl, err.error.message);
       },
     });
   }

@@ -18,10 +18,9 @@ export class AuthInterceptorService implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    // return next.handle(req);
     return this.loginService.isLoggedIn.pipe(
       take(1),
-      exhaustMap((isLogged) => {
+      exhaustMap((isLogged: boolean) => {
         if (!isLogged) return next.handle(req);
         const professorToken = this.loginService.getProfessorToken();
         if (professorToken) {

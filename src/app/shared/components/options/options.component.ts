@@ -1,9 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { Course } from '../../models/Course.model';
+import { User } from '../../models/User.model';
 import { CoursesService } from '../../services/courses.service';
 import { StudentsService } from '../../services/students.service';
-import * as DTO from '../../models/DTO.model';
 
 @Component({
   selector: 'app-options',
@@ -88,13 +89,13 @@ export class OptionsComponent implements OnInit, OnDestroy {
     const search: string = event.target.value;
     if (this.path === 'students') {
       this.dataToDisplay = this.data.filter(
-        (student: DTO.User) =>
+        (student: User) =>
           student.firstName.toLowerCase().includes(search.toLowerCase()) ||
           student.lastName.toLowerCase().includes(search.toLowerCase())
       );
     }
     if (this.path === 'courses') {
-      this.dataToDisplay = this.data.filter((course: DTO.Course) =>
+      this.dataToDisplay = this.data.filter((course: Course) =>
         course.name.toLowerCase().includes(search.toLowerCase())
       );
     }

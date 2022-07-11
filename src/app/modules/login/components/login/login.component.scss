@@ -17,8 +17,7 @@
     cursor: pointer;
     transition: all 0.1s linear;
     &:disabled {
-      cursor: url("../../../../shared/images/icons8-checked-user-male-24.png"),
-        auto;
+      // cursor: url(`${assets}/icons8-checked-user-male-24.png`), auto;
     }
     &:hover {
       &:enabled {

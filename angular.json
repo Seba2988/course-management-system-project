@@ -6,8 +6,12 @@
     "course-management-system-project": {
       "projectType": "application",
       "schematics": {
+        "@schematics/angular:service": {
+          "skipTests": true
+        },
         "@schematics/angular:component": {
-          "style": "scss"
+          "style": "scss",
+          "skipTests": true
         },
         "@schematics/angular:application": {
           "strict": false

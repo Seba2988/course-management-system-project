@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import * as DTO from '../models/DTO.model';
+import { EditAbsence } from '../models/EditAbsence.model';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +10,10 @@ import * as DTO from '../models/DTO.model';
 export class AttendanceService {
   constructor(private http: HttpClient) {}
 
-  getAbsencesForStudentForCouse(studentId: string, courseId: string) {
+  getAbsencesForStudentForCouse(
+    studentId: string,
+    courseId: string
+  ): Observable<any> {
     const url = `${environment.ServerHost}/student/${studentId}/absences/${courseId}`;
     return this.http.get(url);
   }
@@ -17,8 +21,8 @@ export class AttendanceService {
   editAttendance(
     absenceId: string,
     studentId: string,
-    editAbsence: DTO.EditAbsence
-  ) {
+    editAbsence: EditAbsence
+  ): Observable<any> {
     const url = `${environment.ServerHost}/student/${studentId}/absences/${absenceId}`;
     return this.http.patch(url, editAbsence);
   }

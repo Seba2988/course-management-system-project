@@ -1,9 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ValidationErrors } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { FormControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { EditAbsence } from 'src/app/shared/models/EditAbsence.model';
 import { AttendanceService } from 'src/app/shared/services/attendance.service';
-import * as DTO from '../../../../models/DTO.model';
+import { ModalService } from 'src/app/shared/services/modal.service';
+import { ValidatorsService } from 'src/app/shared/services/validators.service';
 
 @Component({
   selector: 'app-absence-edit',
@@ -15,13 +17,13 @@ export class AbsenceEditComponent implements OnInit, OnDestroy {
   studentId: string = null;
   courseId: string = null;
   editForm: FormGroup;
-  message: string = null;
-  redirectUrl: string = null;
+  redirectUrl: string;
   editSub: Subscription;
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
-    private attendanceService: AttendanceService
+    private attendanceService: AttendanceService,
+    private modalService: ModalService,
+    private validatorsService: ValidatorsService
   ) {}
 
   ngOnInit(): void {
@@ -36,42 +38,30 @@ export class AbsenceEditComponent implements OnInit, OnDestroy {
         isPresent: new FormControl(false, []),
         reasonOfAbsence: new FormControl(null, []),
       },
-      this.reasonOfAbsenceValidator
+      this.validatorsService.reasonOfAbsenceValidator
     );
     this.redirectUrl = `students/course/${this.courseId}`;
   }
 
   onSubmit() {
-    const editAbsence: DTO.EditAbsence = {
+    const editAbsence: EditAbsence = {
       isPresent: this.editForm.value.isPresent,
       reasonOfAbsence: this.editForm.value.reasonOfAbsence,
     };
-    // console.log(editAbsence);
     this.editSub = this.attendanceService
       .editAttendance(this.absenceId, this.studentId, editAbsence)
       .subscribe({
-        next: (response) => {
-          console.log(response);
-          this.message = 'The absence has been updated';
+        next: () => {
+          this.modalService.openModal(
+            this.redirectUrl,
+            'The absence has been updated'
+          );
         },
         error: (err) => {
-          console.log(err);
-          this.message = err.error.message;
+          this.modalService.openModal(this.redirectUrl, err.error.message);
         },
       });
   }
-
-  reasonOfAbsenceValidator(fg: FormGroup): ValidationErrors | null {
-    const isPresent = fg.get('isPresent').value;
-    const reasonOfAbsence = fg.get('reasonOfAbsence').value;
-    if (
-      !isPresent &&
-      (reasonOfAbsence == null || reasonOfAbsence.trim().length === 0)
-    )
-      return { explanationError: fg.value };
-    return null;
-  }
-
   ngOnDestroy(): void {
     if (this.editSub) this.editSub.unsubscribe();
   }

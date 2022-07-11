@@ -1,6 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { LoginService } from 'src/app/modules/login/services/login.service';
 
 @Component({

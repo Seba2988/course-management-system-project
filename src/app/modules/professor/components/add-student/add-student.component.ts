@@ -1,13 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  Validators,
-} from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { SignUpModel } from 'src/app/shared/models/SignUp.model';
+import { ModalService } from 'src/app/shared/services/modal.service';
 import { StudentsService } from 'src/app/shared/services/students.service';
+import { ValidatorsService } from 'src/app/shared/services/validators.service';
 
 @Component({
   selector: 'app-add-student',
@@ -16,10 +12,11 @@ import { StudentsService } from 'src/app/shared/services/students.service';
 })
 export class AddStudentComponent implements OnInit {
   newStudentForm: FormGroup;
-  message: string = null;
+  redirectUrl: string = '/professors/students';
   constructor(
-    private router: Router,
-    private studentsService: StudentsService
+    private studentsService: StudentsService,
+    private modalService: ModalService,
+    private validatorsService: ValidatorsService
   ) {}
 
   ngOnInit(): void {
@@ -30,53 +27,36 @@ export class AddStudentComponent implements OnInit {
         email: new FormControl(null, [Validators.email]),
         password: new FormControl(null, [
           Validators.required,
-          Validators.pattern(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!/@#\$%\^&\*]).{8,}$/
-          ),
+          Validators.pattern(this.validatorsService.passwordRegex),
         ]),
         confirmPassword: new FormControl(null, [
           Validators.required,
-          Validators.pattern(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!/@#\$%\^&\*]).{8,}$/
-          ),
+          Validators.pattern(this.validatorsService.passwordRegex),
         ]),
         dateOfBirth: new FormControl(null, [
           Validators.required,
-          this.DoBValidator,
+          this.validatorsService.DoBValidator,
         ]),
         address: new FormControl(null, Validators.required),
       },
-      this.passwordComparer
+      this.validatorsService.passwordComparer
     );
   }
 
   onSubmit() {
     if (!this.newStudentForm.valid) return;
-    const student = this.newStudentForm.value;
+    const student: SignUpModel = this.newStudentForm.value;
     this.studentsService.newStudent(student).subscribe({
       next: () => {
-        this.message = 'The new student has been added';
+        this.modalService.openModal(
+          this.redirectUrl,
+          'The new student has been added'
+        );
       },
       error: (err) => {
         console.log(err);
-        this.message = 'Error!';
+        this.modalService.openModal(this.redirectUrl, err.error.message);
       },
     });
-  }
-
-  DoBValidator(control: AbstractControl): ValidationErrors | null {
-    const minDate = new Date(new Date().getTime() - 567648000000);
-    const controlDate = new Date(control.value);
-    if (controlDate > minDate) return { ageError: control.value };
-    return null;
-  }
-  passwordComparer(fg: FormGroup): ValidationErrors | null {
-    const password = fg.get('password').value;
-    const confirmPassword = fg.get('confirmPassword').value;
-    console.log(password);
-    console.log(confirmPassword);
-    if (confirmPassword !== password)
-      return { passwordComparisonError: fg.value };
-    return null;
   }
 }
